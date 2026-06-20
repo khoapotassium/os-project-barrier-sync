@@ -1,5 +1,3 @@
-// Time có cả barrier_init, barrier_destroy, tạo thread, chờ thread.
-
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,7 +45,7 @@ static void barrier_destroy(Barrier *b) {
     pthread_mutex_destroy(&b->mutex);
     pthread_cond_destroy(&b->cond);
 }
-static void barrier_wait(Barrier *b) {            /* same logic, no printf */
+static void barrier_wait(Barrier *b) {
     pthread_mutex_lock(&b->mutex);
     int gen = b->generation;
     b->waiting_count++;
@@ -90,9 +88,6 @@ static int run_serial(double *avg_out) {
     *avg_out = average; return fail;
 }
 
-/* run one configuration, return best time of `repeat` runs */
-// Có cả barrier_init, barrier_destroy, tạo thread, chờ thread.
-
 static double measure(int threads, int repeat, int *fail_out, double *avg_out) {
     double best = 1e18;
     for (int r = 0; r < repeat; r++) {
@@ -123,12 +118,12 @@ static double measure(int threads, int repeat, int *fail_out, double *avg_out) {
 
 int main(void) {
     const int sizes[]   = { 1000000, 10000000 };
-    const int threads[] = { 0, 1, 2, 4, 8, 12 };   /* 0 = serial */
+    const int threads[] = { 0, 1, 2, 4, 8, 12 };
     const int REPEAT    = 7;
 
     for (int s = 0; s < 2; s++) {
         NUM_STUDENTS = sizes[s];
-        srand(12345);                               /* fixed seed -> identical data */
+        srand(12345);
         student_scores = (float *)malloc(sizeof(float) * NUM_STUDENTS);
         for (int i = 0; i < NUM_STUDENTS; i++)
             student_scores[i] = (float)(rand() % 101) / 10.0f;
@@ -152,6 +147,5 @@ int main(void) {
         }
         free(student_scores);
     }
-    printf("\nDone. Copy everything above and send it back.\n");
     return 0;
 }
